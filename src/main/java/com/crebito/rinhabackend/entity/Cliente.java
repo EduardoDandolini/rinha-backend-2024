@@ -31,4 +31,8 @@ public class Cliente {
     @Column(name = "LIMITE", nullable = false)
     private Integer limite;
 
+    public void efetuarTransacao(Transacao transacao){
+        this.transacoes.add(transacao);
+    }
+
 }

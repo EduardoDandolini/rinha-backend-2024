@@ -24,7 +24,7 @@ public class Transacao {
     private Cliente cliente;
 
     @Column(name = "TIPO", nullable = false)
-    private char tipo;
+    private String tipo;
 
     @Column(name = "VALOR", nullable = false)
     private Integer valor;
