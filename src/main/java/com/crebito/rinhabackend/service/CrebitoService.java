@@ -6,14 +6,14 @@ import com.crebito.rinhabackend.entity.Transacao;
 import com.crebito.rinhabackend.repository.ClienteRepository;
 import com.crebito.rinhabackend.repository.TransacaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CrebitoService {
@@ -22,33 +22,21 @@ public class CrebitoService {
     @Autowired
     private TransacaoRepository transacaoRepository;
 
-    @Transactional
     public Mono<TransacaoResponseDTO> efetuarTransacao(Integer id, TransacaoRequestDTO dto) {
         return clienteRepository.buscarClientePorId(id)
                 .flatMap(cliente -> {
-                    if (dto.tipo().equals("c")) {
-                        cliente.setSaldo(cliente.getSaldo() + dto.valor());
-                    } else if (dto.tipo().equals("d")) {
-                        if (cliente.getSaldo() - dto.valor() < -cliente.getLimite()) {
-                            return Mono.just(new TransacaoResponseDTO(cliente.getLimite(), cliente.getSaldo()));
-                        }
-                        cliente.setSaldo(cliente.getSaldo() - dto.valor());
-                    } else {
-                        return Mono.just(new TransacaoResponseDTO(cliente.getLimite(), cliente.getSaldo()));
-                    }
+                    calcularSaldo(cliente, dto);
                     cliente.efetuarTransacao(criarNovaTransacao(cliente, dto.tipo(), dto));
                     return clienteRepository.save(cliente)
                             .map(savedCliente -> new TransacaoResponseDTO(savedCliente.getLimite(), savedCliente.getSaldo()));
                 });
-        }
-
-    @Transactional
+    }
     public Mono<ExtratoResponseDTO> extrato(Integer id) {
         return clienteRepository.buscarClientePorId(id)
                 .flatMap(cliente -> {
                     Mono<Integer> saldoTotal = transacaoRepository.getSaldoTotalByClienteId(id)
                             .switchIfEmpty(Mono.just(0));
-                    Flux<TransacaoExtratoResponseDTO> ultimasTransacoes = transacaoRepository.findByClienteIdOrderByRealizada(id)
+                    Flux<TransacaoExtratoResponseDTO> ultimasTransacoes = transacaoRepository.findByClienteIdOrderByRealizadaEm(id)
                             .switchIfEmpty(Flux.empty());
 
                     return Mono.zip(saldoTotal, ultimasTransacoes.collectList())
@@ -68,6 +56,17 @@ public class CrebitoService {
         transacao.setValor(requestDTO.valor());
         transacao.setCliente(cliente);
         return transacao;
+    }
+
+    private void calcularSaldo(Cliente cliente, TransacaoRequestDTO dto) {
+        if (dto.tipo().equals("c")) {
+            cliente.setSaldo(cliente.getSaldo() + dto.valor());
+        } else if (dto.tipo().equals("d")) {
+            if (cliente.getSaldo() - dto.valor() < -cliente.getLimite()) {
+                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Saldo insuficiente para completar a transação de débito");
+            }
+            cliente.setSaldo(cliente.getSaldo() - dto.valor());
+        }
     }
 }
 
