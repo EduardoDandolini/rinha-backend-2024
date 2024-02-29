@@ -34,9 +34,9 @@ public class CrebitoService {
     public Mono<ExtratoResponseDTO> extrato(Integer id) {
         return clienteRepository.buscarClientePorId(id)
                 .flatMap(cliente -> {
-                    Mono<Integer> saldoTotal = transacaoRepository.getSaldoTotalByClienteId(id)
+                    Mono<Integer> saldoTotal = transacaoRepository.getSaldoTotalById(id)
                             .switchIfEmpty(Mono.just(0));
-                    Flux<TransacaoExtratoResponseDTO> ultimasTransacoes = transacaoRepository.findByClienteIdOrderByRealizadaEm(id)
+                    Flux<TransacaoExtratoResponseDTO> ultimasTransacoes = transacaoRepository.findByIdOrderByRealizadaEm(id)
                             .switchIfEmpty(Flux.empty());
 
                     return Mono.zip(saldoTotal, ultimasTransacoes.collectList())
@@ -54,7 +54,7 @@ public class CrebitoService {
         transacao.setTipo(tipo);
         transacao.setRealizadaEm(LocalDateTime.now());
         transacao.setValor(requestDTO.valor());
-        transacao.setCliente(cliente);
+        cliente.setId(cliente.getId());
         return transacao;
     }
 
@@ -63,7 +63,7 @@ public class CrebitoService {
             cliente.setSaldo(cliente.getSaldo() + dto.valor());
         } else if (dto.tipo().equals("d")) {
             if (cliente.getSaldo() - dto.valor() < -cliente.getLimite()) {
-                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Saldo insuficiente para completar a transação de débito");
+                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY);
             }
             cliente.setSaldo(cliente.getSaldo() - dto.valor());
         }

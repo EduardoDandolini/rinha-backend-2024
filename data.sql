@@ -1,19 +1,18 @@
-create table cliente (
-    id_cliente integer not null,
-    limite integer not null,
-    saldo integer not null,
-    primary key (id_cliente)
-);
-
-create table transacao (
-    id_transacao integer not null,
-    descricao varchar(255) not null,
-    realizada_em timestamp(6) not null,
-    tipo varchar not null,
-    valor integer not null,
-    cliente_id_cliente integer,
-    primary key (id_transacao)
-);
+--create table if not exists cliente (
+--    id integer not null,
+--    limite integer not null,
+--    saldo integer not null,
+--    primary key (id)
+--);
+--
+--create table if not exists transacao (
+--    id integer not null,
+--    descricao varchar(255) not null,
+--    realizada_em timestamp(6) not null,
+--    tipo varchar not null,
+--    valor integer not null,
+--    primary key (id)
+--);
 
 INSERT INTO cliente (id, limite, saldo) VALUES
 ('1', '100000', '0'),
