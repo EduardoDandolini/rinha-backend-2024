@@ -13,7 +13,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table("cliente")
+@Table(name = "cliente")
 public class Cliente {
     @Id
     private Integer id;
