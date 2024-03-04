@@ -38,24 +38,23 @@ services:
       - POSTGRES_DB=rinha-backend
     volumes:
       - ./import.sql:/docker-entrypoint-initdb.d/script.sql
-      deploy:
-        resources:
-          limits:
-            cpus: "0.6"
-            memory: "340MB"
-
+    deploy:
+      resources:
+        limits:
+            cpus:"0.6"
+            memory:"340MB"
 
   nginx:
     image: nginx:latest
     network_mode: host
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      depends_on:
-        - api01
-        - api02
-      deploy:
-        resources:
-          limits:
+    depends_on:
+      - api01
+      - api02
+    deploy:
+      resources:
+        limits:
             cpu:"0.2"
             memory:"50MB"
 
