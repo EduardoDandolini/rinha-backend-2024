@@ -1,6 +1,5 @@
 FROM openjdk:17-alpine
-ARG JAR_FILE=target/rinhadebackend.jar
-RUN mkdir app
+ARG JAR_FILE=target/rinha-backend-0.0.1-SNAPSHOT.jar
 WORKDIR /app
 COPY ${JAR_FILE} .
-CMD ["java", "-jar", "-Dspring.profiles.active=prod" ,"./rinhadebackend.jar"]
+CMD ["java", "-jar", "./rinhadebackend.jar"]

@@ -1,28 +1,27 @@
 services:
-
   api01:
-    image:
+      image: eduardodandolini/rinha-backend:1.0
       network_mode: host
       environment:
         - HTTP_PORT=8081
       depends_on:
         db:
           condition: service_healthy
-        deploy:
+          deploy:
           resources:
             limits:
               cpu:"0.35"
               memory:"80MB"
 
   api02:
-    image:
+      image: eduardodandolini/rinha-backend:1.0
       network_mode: host
       environment:
         - HTTP_PORT=8082
       depends_on:
         db:
           condition: service_healthy
-        deploy:
+          deploy:
           resources:
             limits:
               cpu:"0.35"
