@@ -25,4 +25,13 @@ public class Transacao {
 
     private LocalDateTime realizadaEm;
 
+    private Integer clienteId;
+
+    public Transacao(String tipo, Integer valor, String descricao, LocalDateTime realizadaEm, Integer clienteId) {
+        this.tipo = tipo;
+        this.valor = valor;
+        this.descricao = descricao;
+        this.realizadaEm = realizadaEm;
+        this.clienteId = clienteId;
+    }
 }

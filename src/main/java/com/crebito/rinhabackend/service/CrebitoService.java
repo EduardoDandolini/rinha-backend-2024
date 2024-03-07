@@ -6,6 +6,7 @@ import com.crebito.rinhabackend.entity.Transacao;
 import com.crebito.rinhabackend.repository.ClienteRepository;
 import com.crebito.rinhabackend.repository.TransacaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Limit;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -36,7 +37,7 @@ public class CrebitoService {
                 .flatMap(cliente -> {
                     Mono<Integer> saldoTotal = transacaoRepository.getSaldoTotalById(id)
                             .switchIfEmpty(Mono.just(0));
-                    Flux<TransacaoExtratoResponseDTO> ultimasTransacoes = transacaoRepository.findByIdOrderByRealizadaEm(id)
+                    Flux<TransacaoExtratoResponseDTO> ultimasTransacoes = transacaoRepository.findByIdOrderByRealizadaEmDesc(id, Limit.of(10))
                             .switchIfEmpty(Flux.empty());
 
                     return Mono.zip(saldoTotal, ultimasTransacoes.collectList())
@@ -50,12 +51,7 @@ public class CrebitoService {
     }
 
     private Transacao criarNovaTransacao(Cliente cliente, String tipo, TransacaoRequestDTO requestDTO) {
-        Transacao transacao = new Transacao();
-        transacao.setTipo(tipo);
-        transacao.setRealizadaEm(LocalDateTime.now());
-        transacao.setValor(requestDTO.valor());
-        cliente.setId(cliente.getId());
-        return transacao;
+        return new Transacao(tipo, requestDTO.valor(), requestDTO.descricao(), LocalDateTime.now(), cliente.getId());
     }
 
     private void calcularSaldo(Cliente cliente, TransacaoRequestDTO dto) {
