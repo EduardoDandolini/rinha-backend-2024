@@ -11,9 +11,9 @@ create table if not exists transacao (
     realizada_em TIMESTAMP(6) NOT NULL,
     tipo VARCHAR NOT NULL,
     valor INTEGER NOT NULL,
-    cliente_id INTEGER NOT NULL, -- Chave estrangeira
+    cliente_id INTEGER NOT NULL,
     PRIMARY KEY (id),
-    FOREIGN KEY (cliente_id) REFERENCES cliente(id) -- Definição da chave estrangeira
+    FOREIGN KEY (cliente_id) REFERENCES cliente(id)
 );
 
 INSERT INTO cliente (id, limite, saldo) VALUES
