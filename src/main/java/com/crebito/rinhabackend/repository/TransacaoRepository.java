@@ -14,5 +14,6 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface TransacaoRepository extends R2dbcRepository<Transacao, Integer> {
     Mono<Integer> getSaldoTotalById(Integer id);
-    Flux<TransacaoExtratoResponseDTO> findByIdOrderByRealizadaEmDesc(Integer id, Limit limit);
+    @Query("SELECT * FROM transacao t WHERE t.cliente_id = :id ORDER BY t.realizada_em DESC LIMIT 10")
+    Flux<TransacaoExtratoResponseDTO> findByIdOrderByRealizadaEmDesc(Integer id);
 }

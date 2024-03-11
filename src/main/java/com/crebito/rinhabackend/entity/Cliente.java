@@ -23,9 +23,9 @@ public class Cliente {
 
     private Integer limite;
 
-    public void efetuarTransacao(Transacao transacao){
-        List<Transacao> transacoes = new ArrayList<>();
-        transacoes.add(transacao);
-    }
+//    public void efetuarTransacao(Transacao transacao){
+//        List<Transacao> transacoes = new ArrayList<>();
+//        transacoes.add(transacao);
+//    }
 
 }

@@ -27,8 +27,9 @@ public class CrebitoService {
         return clienteRepository.buscarClientePorId(id)
                 .flatMap(cliente -> {
                     calcularSaldo(cliente, dto);
-                    cliente.efetuarTransacao(criarNovaTransacao(cliente, dto.tipo(), dto));
-                    return clienteRepository.save(cliente)
+                    Transacao transacao = criarNovaTransacao(cliente, dto.tipo(), dto);
+                    return transacaoRepository.save(transacao)
+                            .flatMap(savedTransacao -> clienteRepository.save(cliente))
                             .map(savedCliente -> new TransacaoResponseDTO(savedCliente.getLimite(), savedCliente.getSaldo()));
                 });
     }
@@ -37,7 +38,7 @@ public class CrebitoService {
                 .flatMap(cliente -> {
                     Mono<Integer> saldoTotal = transacaoRepository.getSaldoTotalById(id)
                             .switchIfEmpty(Mono.just(0));
-                    Flux<TransacaoExtratoResponseDTO> ultimasTransacoes = transacaoRepository.findByIdOrderByRealizadaEmDesc(id, Limit.of(10))
+                    Flux<TransacaoExtratoResponseDTO> ultimasTransacoes = transacaoRepository.findByIdOrderByRealizadaEmDesc(id)
                             .switchIfEmpty(Flux.empty());
 
                     return Mono.zip(saldoTotal, ultimasTransacoes.collectList())

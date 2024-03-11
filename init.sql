@@ -1,20 +1,20 @@
-create table if not exists cliente (
-    id integer not null,
+CREATE UNLOGGED TABLE cliente (
+    id int primary key,
     limite integer not null,
-    saldo integer not null,
-    primary key (id)
+    saldo integer not null
 );
 
-create table if not exists transacao (
-    id INTEGER NOT NULL,
+CREATE UNLOGGED TABLE transacao (
+    id SERIAL primary key,
     descricao VARCHAR(255) NOT NULL,
     realizada_em TIMESTAMP(6) NOT NULL,
     tipo VARCHAR NOT NULL,
     valor INTEGER NOT NULL,
-    cliente_id INTEGER NOT NULL,
-    PRIMARY KEY (id),
-    FOREIGN KEY (cliente_id) REFERENCES cliente(id)
+    cliente_id INTEGER NOT NULL
 );
+
+CREATE INDEX idx_transacao_id_cliente ON transacao (cliente_id);
+CREATE INDEX idx_transacao_id_cliente_realizada_em ON transacao (cliente_id, realizada_em DESC);
 
 INSERT INTO cliente (id, limite, saldo) VALUES
 ('1', '100000', '0'),
