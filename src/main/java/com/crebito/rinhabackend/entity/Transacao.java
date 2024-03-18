@@ -12,8 +12,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "transacao")
 public class Transacao {
+
     @Id
     private Integer id;
 

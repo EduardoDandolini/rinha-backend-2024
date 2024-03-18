@@ -18,8 +18,10 @@ import java.util.List;
 
 @Service
 public class CrebitoService {
+
     @Autowired
     private ClienteRepository clienteRepository;
+
     @Autowired
     private TransacaoRepository transacaoRepository;
 
@@ -33,6 +35,7 @@ public class CrebitoService {
                             .map(savedCliente -> new TransacaoResponseDTO(savedCliente.getLimite(), savedCliente.getSaldo()));
                 });
     }
+
     public Mono<ExtratoResponseDTO> extrato(Integer id) {
         return clienteRepository.buscarClientePorId(id)
                 .flatMap(cliente -> {

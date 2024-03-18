@@ -14,18 +14,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "cliente")
 public class Cliente {
+
     @Id
     private Integer id;
 
     private Integer saldo;
 
     private Integer limite;
-
-//    public void efetuarTransacao(Transacao transacao){
-//        List<Transacao> transacoes = new ArrayList<>();
-//        transacoes.add(transacao);
-//    }
 
 }

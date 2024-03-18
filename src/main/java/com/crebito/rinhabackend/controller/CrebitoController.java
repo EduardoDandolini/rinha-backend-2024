@@ -13,8 +13,10 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping("/clientes")
 public class CrebitoController {
+
     @Autowired
     private CrebitoService crebitoService;
+
     @PostMapping("/{id}/transacoes")
     public Mono<ResponseEntity<TransacaoResponseDTO>> efetuarTransacao(@PathVariable Integer id, @RequestBody @Valid TransacaoRequestDTO dto) {
         return crebitoService.efetuarTransacao(id, dto)
